@@ -6,6 +6,10 @@ Uma API REST com endpoints de clientes, produtos e pedidos desenvolvida com Code
 ![Badge](https://img.shields.io/badge/CodeIgniter-4.3-red)
 ![Badge](https://img.shields.io/badge/MySQL-8.0-orange)
 
+## Nota Pessoal
+
+Gostei muito de desenvolver o projeto, assim pude conhecer a delicinha que é o Codeigniter 4, contúdo, lamento por não ter conseguido aproveitar a tempo estipulado para a realização do projeto. Passei mais tempo no hospital do que em casa. Fico feliz pela oportunidade e espero que gostem do resultado. No último momento, tive problemas com o JWT, por conta disso eu decidi não implementá-lo.
+
 ## Sobre o Projeto
 
 Esta API foi desenvolvida como parte de um desafio técnico para a posição de Programador Back-end Júnior. O sistema permite gerenciar clientes, produtos e pedidos de compra, seguindo os seguintes requisitos:
@@ -33,19 +37,45 @@ Esta API foi desenvolvida como parte de um desafio técnico para a posição de 
 
 1. **Clone o repositório**
    ```bash
-   git clone https://github.com/andrepfdev/prova-backend-ci4.git
-   cd prova-backend-ci4
+   git clone https://github.com/andrepfdev/api-codeigniter4.git
+   cd api-codeigniter4
    ```
 ### Método A:
 
 2. **Rode o script de instalação:**
-    ```bash
-    sudo chmod +x install.sh
-    ```
-    ```bash
-    ./install.sh
-    ```
-**Se tudo correr bem, você não precisará executar o Método B.**
+
+ - Se para rodar o docker você usa o comando **docker compose**, sem espaço, use:
+ 
+   Na dúvida? Digite o comando **docker compose version**. 
+ 
+   **No Linux (docker compose):**
+   
+   ```bash
+   chmod +x ./install.sh
+   ```
+   Depois:
+
+   ```bash
+   ./install.sh
+   ```
+      
+- Mas, se para rodar você usa o comando **docker-compose**, tudo junto, use:
+   
+   Na dúvida? Digite o comando **docker-compose version**.
+
+   **No Windows (docker-compose):**
+
+   ```bash
+   chmod +x ./install-wls.sh
+   ```
+   Depois:
+
+   ```bash
+   ./install-wsl.sh
+   ```
+
+**Pronto! Se tudo der certinho, você não precisará executar o Método B.**
+
 Apenas siga as instruções geradas pelo script no seu terminal. 
 
 ### Método B:
@@ -54,7 +84,7 @@ Apenas siga as instruções geradas pelo script no seu terminal.
 
 2. **Instale as dependências**
    ```bash
-   composer install
+   composer-install
    ```
 
 3. **Copie e configure o ambiente**
@@ -76,6 +106,12 @@ Apenas siga as instruções geradas pelo script no seu terminal.
     CI_ENVIRONMENT = development
    ```
 
+   Não pode esquecer da chave par o JWT que também vai no **.env**:
+
+   ```ini
+    JWT_SECRET = "minha_vaga_backend"
+   ```
+   
 4. **Suba os containers**
    ```bash
    docker-compose up -d
@@ -92,6 +128,8 @@ Apenas siga as instruções geradas pelo script no seu terminal.
    ```
 
 7. **Execute os seeders (dados iniciais)**
+   - Para avitar erros devidos aos relacionamentos das tabelas, execute exatamente nesta ordem:
+
    ```bash
    php spark db:seed ProdutoSeeder
    php spark db:seed ClienteSeeder
@@ -116,6 +154,12 @@ Para rodar qualquer comando `php spark`, é necessário primeiro acessar o conta
   ```
 
 ## Endpoints
+
+### Autenticação
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | /api/registrar | Registra novo usuário |
+| POST | /api/validar | Valida e gera token de autencicação |
 
 ### Clientes
 | Método | Endpoint | Descrição |
@@ -153,6 +197,16 @@ Para rodar qualquer comando `php spark`, é necessário primeiro acessar o conta
 | PUT | /api/itens-pedido/{id} | Atualiza um itens-pedido existente |
 | DELETE | /api/itens-pedido/{id} | Remove um itens-pedido |
 
+### Usuários
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | /api/usuarios | Lista todos os usuários cadastrados |
+
+
+### Diagrama do Banco de Dados
+
+![Image](https://github.com/user-attachments/assets/711de36c-8580-4530-b9dd-e2357e4046a3)
+
 ## Paginação e Filtros
 
 ### Paginação
@@ -172,9 +226,126 @@ Parâmetros comuns de filtro:
 - `preco` (filtra produtos por preço);
 - `status` (filtra pedidos por status: `Em Aberto`, `Pago`, `Cancelado`).
 
+### Consultar os endpoints
+
+Para testar os endpoints da API, você pode utilizar ferramentas como [Postman](https://www.postman.com/) ou [Insomnia](https://insomnia.rest/). 
+
+### Exemplos de Requisições e Respostas
+
+#### Formato Padrão
+
+##### Requisição
+```json
+{
+   "parametros": {
+      "campo1": "valor1",
+      "campo2": "valor2"
+   }
+}
+```
+
+##### Resposta
+```json
+{
+   "cabecalho": {
+      "status": 200,
+      "mensagem": "Dados retornados com sucesso"
+   },
+   "retorno": {
+      // dados solicitados
+   }
+}
+```
+
+#### Exemplos por Endpoint
+
+##### Clientes (`/api/clientes`)
+- **GET**: Lista clientes (com paginação)
+```http
+GET /api/clientes?page=1&nome_razao_social=Carlos
+Authorization: Bearer {seu_token}
+```
+```json
+{
+   "cabecalho": {
+      "status": 200,
+      "mensagem": "Clientes listados com sucesso"
+   },
+   "retorno": [
+      {"id": 1, "nome_razao_social": "Carlos Silva", "cpf_cnpj": "12345678901"}
+   ]
+}
+```
+
+##### Produtos (`/api/produtos`)
+- **POST**: Cria produto
+```http
+POST /api/produtos
+Authorization: Bearer {seu_token}
+```
+```json
+// Enviar
+{
+   "parametros": {
+      "nome": "Produto X",
+      "preco": 15.00
+   }
+}
+```
+
+##### Pedidos (`/api/pedidos`)
+- **GET**: Lista pedidos filtrados
+```http
+GET /api/pedidos?status=Em%20Aberto
+Authorization: Bearer {seu_token}
+```
+```json
+{
+   "cabecalho": {
+      "status": 200,
+      "mensagem": "Pedidos listados com sucesso"
+   },
+   "retorno": [
+      {"id": 1, "cliente_id": 1, "status": "Em Aberto"}
+   ]
+}
+```
+
+##### Itens Pedido (`/api/itens-pedido`)
+- **POST**: Adiciona item
+```http
+POST /api/itens-pedido
+Authorization: Bearer {seu_token}
+```
+```json
+// Enviar
+{
+   "parametros": {
+      "pedido_id": 1,
+      "produto_id": 1,
+      "quantidade": 2
+   }
+}
+```
+
+#### Como Testar
+
+1. Use Postman ou Insomnia
+2. Endpoint base: `http://localhost:8080/api`
+3. Headers padrão: 
+   ```
+   accept: application/json
+   Content-Type: application/json
+   ```
+4. Para filtros, use query params:
+   ```
+   /api/clientes?nome_razao_social=Carlos
+   /api/produtos?preco=15
+   /api/pedidos?status=Pago
+   ```
 ## Autor
 
-Seu Nome - [LinkedIn](https://www.linkedin.com/in/andrepf7/)
+André Pereira - [LinkedIn](https://www.linkedin.com/in/andrepf7/)
 
 ## Licença
 
