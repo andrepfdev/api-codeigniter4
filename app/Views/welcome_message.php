@@ -237,7 +237,7 @@
                 color: rgba(255, 255, 255, .8);
             }
         }
-        
+
         .heroe {
             display: flex;
             justify-content: center;
@@ -254,7 +254,7 @@
             cursor: pointer;
             font: inherit;
             font-size: 1.2rem;
-            margin: 1rem 0; 
+            margin: 1rem 0;
             padding: .5rem 1.3rem;
             text-align: center;
         }
@@ -328,7 +328,7 @@
                 <a href="https://github.com/andrepfdev/api-codeigniter4" target="_blank"><button class="button-doc">Repositório no Github</button></a>
             </div>
             <div class="two">
-                <img width="120%" src="https://github.com/user-attachments/assets/73187548-3a29-463b-8406-765c2a567c7a" alt="">
+                <img width="120%" src="https://github.com/user-attachments/assets/6b17e191-1a27-4c85-baf5-52e9ac0a6e2e" alt="">
             </div>
         </div>
 
