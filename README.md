@@ -8,7 +8,7 @@ Uma API REST com endpoints de clientes, produtos e pedidos desenvolvida com Code
 
 ## Nota Pessoal
 
-Gostei muito de desenvolver o projeto, assim pude conhecer a delicinha que é o Codeigniter 4, contúdo, lamento por não ter conseguido aproveitar a tempo estipulado para a realização do projeto. Passei mais tempo no hospital do que em casa. Fico feliz pela oportunidade e espero que gostem do resultado. No último momento, tive problemas com o JWT, por conta disso eu decidi não implementá-lo.
+Gostei muito de desenvolver o projeto, assim pude conhecer a delicinha que é o Codeigniter 4, contúdo, lamento por não ter conseguido aproveitar a tempo estipulado para a realização do projeto. Passei mais tempo no hospital do que em casa. Fico feliz pela oportunidade e espero que gostem do resultado. Acabei deixando para implementar o JWT no finalzinho do tempo, priorizando as outras etapas do desenvolvimento.
 
 ## Sobre o Projeto
 
@@ -84,7 +84,12 @@ Apenas siga as instruções geradas pelo script no seu terminal.
 
 2. **Instale as dependências**
    ```bash
-   composer-install
+   composer install
+   ```
+   Ou, se for o caso:
+
+   ```bash
+   composer update
    ```
 
 3. **Copie e configure o ambiente**
