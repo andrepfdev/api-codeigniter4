@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html:rw
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CI_ENVIRONMENT: development
+    networks:
+      - ci4network
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ci4
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: ci4user
+      MYSQL_PASSWORD: ci4pass
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - ci4network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "ci4user", "--password=ci4pass" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    command: --default-authentication-plugin=mysql_native_password
+
+networks:
+  ci4network:
+    driver: bridge
+
+volumes:
+  dbdata:

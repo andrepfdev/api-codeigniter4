@@ -1,0 +1,951 @@
+openapi: 3.0.0
+
+info:
+  title: API CodeIgniter 4
+  version: 1.0.0
+  description: |
+    Documentação da API CodeIgniter 4 com Swagger
+    
+    ## Autenticação
+    Esta API utiliza JWT para autenticação. Para acessar endpoints protegidos:
+    1. Obtenha um token através do endpoint `/api/login`
+    2. Inclua o token no cabeçalho de autorização: `Authorization: Bearer seu_token_aqui`
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor de desenvolvimento
+
+paths:
+  /api/registrar:
+    post:
+      tags:
+        - Autenticação
+      summary: Registra um novo usuário
+      description: Cria uma nova conta de usuário no sistema.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email do usuário
+                  example: "admin@email.com"
+                password:
+                  type: string
+                  description: Senha do usuário
+                  example: "senha123"
+              required:
+                - email
+                - password
+      responses:
+        "201":
+          description: Usuário registrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Usuário registrado com sucesso"
+                  user_id:
+                    type: integer
+                    example: 1
+        "400":
+          description: Dados de requisição inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+  /api/login:
+    post:
+      tags:
+        - Autenticação
+      summary: Realiza login e retorna um token JWT
+      description: |
+        Autentica o usuário com email e senha e retorna um token JWT.
+        Este token deve ser incluído em todas as requisições subsequentes.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: email
+                  description: Email do usuário
+                  example: "admin@email.com"
+                password:
+                  type: string
+                  description: Senha do usuário
+                  example: "senha123"
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          description: Autenticação bem-sucedida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token JWT para autenticação
+                  token_type:
+                    type: string
+                    description: Tipo do token (bearer)
+                    example: "bearer"
+                  expires_in:
+                    type: integer
+                    description: Tempo de validade do token em segundos
+                    example: 3600
+        "400":
+          description: Dados de requisição inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Mensagem de erro
+        "401":
+          description: Credenciais inválidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Mensagem de erro
+                    example: "Credenciais inválidas"
+
+  /api/produtos:
+    get:
+      tags:
+        - Produto
+      summary: Lista todos os produtos
+      description: Retorna a lista de todos os produtos cadastrados no sistema.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Produto"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags:
+        - Produto
+      summary: Cria um novo produto
+      description: Adiciona um novo produto no sistema.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Produto"
+      responses:
+        "201":
+          description: Produto criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Produto criado com sucesso"
+                  id:
+                    type: integer
+                    example: 1
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /api/produtos/{id}:
+    get:
+      tags:
+        - Produto
+      summary: Busca um produto por ID
+      description: Retorna um produto específico baseado no ID fornecido.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do produto
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Produto"
+        "404":
+          description: Produto não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Produto não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    put:
+      tags:
+        - Produto
+      summary: Atualiza um produto por ID
+      description: Atualiza os dados de um produto específico.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do produto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Produto"
+      responses:
+        "200":
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Produto atualizado com sucesso"
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+        "404":
+          description: Produto não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Produto não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - Produto
+      summary: Deleta um produto por ID
+      description: Remove um produto específico do sistema.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do produto
+      responses:
+        "204":
+          description: Produto removido com sucesso
+        "404":
+          description: Produto não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Produto não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /api/clientes:
+    get:
+      tags:
+        - Cliente
+      summary: Lista todos os clientes
+      description: Retorna a lista de todos os clientes cadastrados no sistema.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Cliente"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags:
+        - Cliente
+      summary: Cria um novo cliente
+      description: Adiciona um novo cliente no sistema.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cliente"
+      responses:
+        "201":
+          description: Cliente criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cliente criado com sucesso"
+                  id:
+                    type: integer
+                    example: 1
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /api/clientes/{id}:
+    get:
+      tags:
+        - Cliente
+      summary: Busca um cliente por ID
+      description: Retorna um cliente específico baseado no ID fornecido.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do cliente
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cliente"
+        "404":
+          description: Cliente não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Cliente não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    put:
+      tags:
+        - Cliente
+      summary: Atualiza um cliente por ID
+      description: Atualiza os dados de um cliente específico.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do cliente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Cliente"
+      responses:
+        "200":
+          description: Cliente atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Cliente atualizado com sucesso"
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+        "404":
+          description: Cliente não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Cliente não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - Cliente
+      summary: Deleta um cliente por ID
+      description: Remove um cliente específico do sistema.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do cliente
+      responses:
+        "204":
+          description: Cliente removido com sucesso
+        "404":
+          description: Cliente não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Cliente não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /api/pedidos:
+    get:
+      tags:
+        - Pedido
+      summary: Lista todos os pedidos
+      description: Retorna a lista de todos os pedidos cadastrados no sistema.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Pedido"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags:
+        - Pedido
+      summary: Cria um novo pedido
+      description: Adiciona um novo pedido no sistema.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pedido"
+      responses:
+        "201":
+          description: Pedido criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Pedido criado com sucesso"
+                  id:
+                    type: integer
+                    example: 1
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /api/pedidos/{id}:
+    get:
+      tags:
+        - Pedido
+      summary: Busca um pedido por ID
+      description: Retorna um pedido específico baseado no ID fornecido.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do pedido
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pedido"
+        "404":
+          description: Pedido não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Pedido não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    put:
+      tags:
+        - Pedido
+      summary: Atualiza um pedido por ID
+      description: Atualiza os dados de um pedido específico.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pedido"
+      responses:
+        "200":
+          description: Pedido atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Pedido atualizado com sucesso"
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+        "404":
+          description: Pedido não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Pedido não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - Pedido
+      summary: Deleta um pedido por ID
+      description: Remove um pedido específico do sistema.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do pedido
+      responses:
+        "204":
+          description: Pedido removido com sucesso
+        "404":
+          description: Pedido não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Pedido não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /api/itens-pedido:
+    get:
+      tags:
+        - Item de Pedido
+      summary: Lista todos os itens de pedido
+      description: Retorna a lista de todos os itens de pedido cadastrados no sistema.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ItemPedido"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    post:
+      tags:
+        - Item de Pedido
+      summary: Cria um novo item de pedido
+      description: Adiciona um novo item de pedido no sistema.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemPedido"
+      responses:
+        "201":
+          description: Item de pedido criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Item de pedido criado com sucesso"
+                  id:
+                    type: integer
+                    example: 1
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  /api/itens-pedido/{id}:
+    get:
+      tags:
+        - Item de Pedido
+      summary: Busca um item de pedido por ID
+      description: Retorna um item de pedido específico baseado no ID fornecido.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do item de pedido
+      responses:
+        "200":
+          description: Sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemPedido"
+        "404":
+          description: Item de pedido não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Item de pedido não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    put:
+      tags:
+        - Item de Pedido
+      summary: Atualiza um item de pedido por ID
+      description: Atualiza os dados de um item de pedido específico.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do item de pedido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemPedido"
+      responses:
+        "200":
+          description: Item de pedido atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Item de pedido atualizado com sucesso"
+        "400":
+          description: Requisição inválida
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    description: Lista de erros de validação
+        "404":
+          description: Item de pedido não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Item de pedido não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+    delete:
+      tags:
+        - Item de Pedido
+      summary: Deleta um item de pedido por ID
+      description: Remove um item de pedido específico do sistema.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do item de pedido
+      responses:
+        "204":
+          description: Item de pedido removido com sucesso
+        "404":
+          description: Item de pedido não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Item de pedido não encontrado"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+
+  
+
+components:
+  schemas:
+    Produto:
+      type: object
+      properties:
+        parametros:
+          type: object
+          properties:
+            nome:
+              type: string
+              description: Nome do produto
+              example: "Notebook Dell XPS"
+            descricao:
+              type: string
+              description: Descrição do produto
+              example: "Notebook Dell XPS 15 polegadas, 16GB RAM, SSD 512GB"
+            preco:
+              type: number
+              format: float
+              description: Preço do produto
+              example: 4999.99
+          required:
+            - nome
+            - descricao
+            - preco
+
+    Cliente:
+      type: object
+      properties:
+        parametros:
+          type: object
+          properties:
+            nome_razao_social:
+              type: string
+              description: Nome ou Razão Social do cliente
+              example: "João Silva"
+            cpf_cnpj:
+              type: string
+              description: CPF ou CNPJ do cliente
+              example: "123.456.789-00"
+          required:
+            - nome_razao_social
+            - cpf_cnpj
+
+    Pedido:
+      type: object
+      properties:
+        parametros:
+          type: object
+          properties:
+            cliente_id:
+              type: integer
+              description: ID do cliente associado ao pedido
+              example: 1
+            status:
+              type: string
+              enum: [Em Aberto, Pago, Cancelado]
+              description: Status do pedido
+              example: "Em Aberto"
+          required:
+            - cliente_id
+            - status
+
+    ItemPedido:
+      type: object
+      properties:
+        parametros:
+          type: object
+          properties:
+            pedido_id:
+              type: integer
+              description: ID do pedido associado ao item
+              example: 1
+            produto_id:
+              type: integer
+              description: ID do produto associado ao item
+              example: 2
+            quantidade:
+              type: integer
+              description: Quantidade do produto no pedido
+              example: 3
+            valor_unitario:
+              type: number
+              format: float
+              description: Valor unitário do produto no pedido
+              example: 49.90
+          required:
+            - pedido_id
+            - produto_id
+            - quantidade
+            - valor_unitario
+
+  responses:
+    UnauthorizedError:
+      description: Acesso não autorizado
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Token não fornecido ou inválido"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Utilize o token JWT obtido na autenticação.
+        Exemplo: `Authorization: Bearer seu_token_jwt`
