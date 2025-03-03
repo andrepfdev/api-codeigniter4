@@ -14,8 +14,13 @@ if ! command -v docker compose &> /dev/null; then
     exit 1
 fi
 
-# sudo chmod -R 777 ../api-codeigniter4
+# Atribuir permissão ao diretório
+echo "🔑 Permissão necessária..."
+sudo chmod -R 777 ../api-codeigniter4
+
+echo "📦 Insalando extensões PHP..."
 sudo apt install php-curl php-xml php-mbstring php-zip
+sleep 3
 
 #composer install
 echo "📦 Instalando Composer..."
