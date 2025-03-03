@@ -40,6 +40,10 @@ Esta API foi desenvolvida como parte de um desafio técnico para a posição de 
    git clone https://github.com/andrepfdev/api-codeigniter4.git
    cd api-codeigniter4
    ```
+### Abaixo você vai encontrar o passo a passo para realizar a instalação usando Docker. Isso pode ajudar:
+
+https://github.com/user-attachments/assets/762cbf89-5897-4643-ab3a-c2bfd8d2903e
+
 ### Método A:
 
 2. **Rode o script de instalação:**
