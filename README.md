@@ -82,21 +82,12 @@ Apenas siga as instruções geradas pelo script no seu terminal.
 
 **Execute o Método B apenas se o A não estiver funcionado corretamente.**
 
-2. **Instale extensões do PHP que podem ajudar**
+2. **Instale as dependências**
    ```bash
-   sudo apt install php-curl php-xml php-mbstring php-zip
-   ```
-3. **Instale as dependências**
-   ```bash
-   composer install
+   composer-install
    ```
 
-4. **Instale a biblioteca do JWT**
-   ```bash
-   composer require firebase/php-jwt
-   ```
-
-5. **Copie e configure o ambiente**
+3. **Copie e configure o ambiente**
    ```bash
    cp env .env
    ```
@@ -121,22 +112,22 @@ Apenas siga as instruções geradas pelo script no seu terminal.
     JWT_SECRET = "minha_vaga_backend"
    ```
    
-6. **Suba os containers**
+4. **Suba os containers**
    ```bash
    docker-compose up -d
    ```
 
-7. **Acesse o container do PHP**
+5. **Acesse o container do PHP**
    ```bash
    docker-compose exec app bash
    ```
 
-8. **Execute as migrations**
+6. **Execute as migrations**
    ```bash
    php spark migrate
    ```
 
-9. **Execute os seeders (dados iniciais)**
+7. **Execute os seeders (dados iniciais)**
    - Para avitar erros devidos aos relacionamentos das tabelas, execute exatamente nesta ordem:
 
    ```bash
@@ -234,6 +225,16 @@ Parâmetros comuns de filtro:
 - `cpf_cnpj` (filtra clientes por CPF/CNPJ);
 - `preco` (filtra produtos por preço);
 - `status` (filtra pedidos por status: `Em Aberto`, `Pago`, `Cancelado`).
+
+## Vídeo - Testando os Endpoints
+
+Com Swagger
+
+https://github.com/user-attachments/assets/35083f7a-997a-4f34-b9c7-e753e53938f5
+
+Com Postmam
+
+https://github.com/user-attachments/assets/93f46c69-a23a-4d51-a3ee-4ba5f1011b18
 
 ### Consultar os endpoints
 
