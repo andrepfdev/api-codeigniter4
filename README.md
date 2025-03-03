@@ -82,12 +82,21 @@ Apenas siga as instruções geradas pelo script no seu terminal.
 
 **Execute o Método B apenas se o A não estiver funcionado corretamente.**
 
-2. **Instale as dependências**
+2. **Instale extensões do PHP que podem ajudar**
    ```bash
-   composer-install
+   sudo apt install php-curl php-xml php-mbstring php-zip
+   ```
+3. **Instale as dependências**
+   ```bash
+   composer install
    ```
 
-3. **Copie e configure o ambiente**
+4. **Instale a biblioteca do JWT**
+   ```bash
+   composer require firebase/php-jwt
+   ```
+
+5. **Copie e configure o ambiente**
    ```bash
    cp env .env
    ```
@@ -112,22 +121,22 @@ Apenas siga as instruções geradas pelo script no seu terminal.
     JWT_SECRET = "minha_vaga_backend"
    ```
    
-4. **Suba os containers**
+6. **Suba os containers**
    ```bash
    docker-compose up -d
    ```
 
-5. **Acesse o container do PHP**
+7. **Acesse o container do PHP**
    ```bash
    docker-compose exec app bash
    ```
 
-6. **Execute as migrations**
+8. **Execute as migrations**
    ```bash
    php spark migrate
    ```
 
-7. **Execute os seeders (dados iniciais)**
+9. **Execute os seeders (dados iniciais)**
    - Para avitar erros devidos aos relacionamentos das tabelas, execute exatamente nesta ordem:
 
    ```bash

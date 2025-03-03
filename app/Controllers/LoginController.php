@@ -99,7 +99,7 @@ class LoginController extends ResourceController
         return $this->respond($response, 200);
     }
 
-    public function token()
+    public function login()
     {
         $users = $this->request->getPost();
 

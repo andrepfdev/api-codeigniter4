@@ -14,7 +14,7 @@ if ! command -v docker compose &> /dev/null; then
     exit 1
 fi
 
-sudo chmod -R 777 ../api-codeigniter4
+# sudo chmod -R 777 ../api-codeigniter4
 sudo apt install php-curl php-xml php-mbstring php-zip
 
 #composer install

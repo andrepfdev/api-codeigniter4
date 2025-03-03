@@ -10,7 +10,7 @@ $routes->get('/', 'Home::index');
 $routes->group("api", function ($routes) {
     $routes->post("registrar", "RegistroController::index");
     $routes->post("login", "LoginController::index");
-    $routes->post("validar", "LoginController::token");
+    $routes->post("validar", "LoginController::login");
     $routes->get("usuarios", "UserController::index", ['filter' => 'authFilter']);
 });
 

@@ -39,7 +39,13 @@ class AuthFilter implements FilterInterface
 
         if (is_null($token) || empty($token)) {
             $response = service('response');
-            $response->setBody('Access denied');
+            $response->setJSON([
+                'cabecalho' => [
+                    'status' => 401,
+                    'mensagem' => 'Acesso negado. Tente novamente'
+                ],
+                'retorno' => null
+            ]);
             $response->setStatusCode(401);
             return $response;
         }
@@ -48,7 +54,13 @@ class AuthFilter implements FilterInterface
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
         } catch (\Exception $ex) {
             $response = service('response');
-            $response->setBody('Access denied: ' . $ex->getMessage());
+            $response->setJSON([
+                'cabecalho' => [
+                    'status' => 401,
+                    'mensagem' => 'Acesso negado: ' . $ex->getMessage()
+                ],
+                'retorno' => null
+            ]);
             $response->setStatusCode(401);
             return $response;
         }
